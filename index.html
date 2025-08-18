@@ -55,7 +55,7 @@
     <div class="avatar" id="avatarEl">?</div>
     <div class="user-info">
       <small id="tgHandle" class="muted">লগইন করুন</small>
-      <div id="displayName">অতিথি</div>
+      <div id="displayName">@username</div>
     </div>
   </header>
 
@@ -169,7 +169,7 @@
     const CONFIG = {
       DAILY_AD_LIMIT: 100,
       PER_AD_AMOUNT: 0.4,
-      MIN_WITHDRAW: 50,
+      MIN_WITHDRAW: 1,
       REFERRAL_REWARD: 5,
       TELEGRAM_CHANNELS:[
         'https://t.me/dailyEernTaskBot1',
@@ -187,7 +187,7 @@
     function loadUser(){
       const raw=localStorage.getItem(STORAGE_KEY);
       if(raw) return JSON.parse(raw);
-      const newUser={id:'user_'+Math.random().toString(36).slice(2,9),first_name:'অতিথি',username:'',balance:0,adsWatchedTotal:0,adsWatchedToday:0,adsWatchedDate:null,referrals:0,referrer:null};
+      const newUser={id:'user_'+Math.random().toString(36).slice(2,9),first_name:'@username',username:'',balance:0,adsWatchedTotal:0,adsWatchedToday:0,adsWatchedDate:null,referrals:0,referrer:null};
       saveUser(newUser);
       return newUser;
     }
@@ -195,7 +195,7 @@
 
     function renderHeader(){
       document.getElementById('displayName').innerText = user.first_name;
-      document.getElementById('tgHandle').innerText = user.username?('@'+user.username):'Telegram নাম নেই';
+      document.getElementById('tgHandle').innerText = user.username?('@'+user.username):'@username';
       document.getElementById('avatarEl').innerText = user.first_name[0]||'?';
       document.getElementById('profileAvatar').innerText = user.first_name[0]||'?';
     }
