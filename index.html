@@ -1,278 +1,323 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telegram Mini App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>মিনি অ্যাপ — ডেমো</title>
   <style>
-    body {
+    :root{
+      --bg:#ffffff; /* পুরো স্কিন সাদা হবে */
+      --card:#f0f0f0;
+      --text:#000000;
+      --muted:#555555;
+      --accent:#06b6d4;
+      --btn-radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{
       margin:0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #fff;
-    }
-    .header {
-      display:flex;
-      align-items:center;
-      padding:10px;
-      background-color:#1f1f1f;
-    }
-    .profile-pic {
-      width:50px;
-      height:50px;
-      border-radius:50%;
-      margin-right:10px;
-    }
-    .content {
-      padding:10px;
-      min-height:70vh;
-    }
-    .card {
-      background-color:#1f1f1f;
-      padding:15px;
-      margin-bottom:10px;
-      border-radius:10px;
-    }
-    .buttons {
-      position:fixed;
-      bottom:0;
-      width:100%;
-      display:flex;
-      background-color:#1a1a1a;
-    }
-    .buttons button {
-      flex:1;
-      padding:15px;
-      border:none;
-      background-color:#333;
-      color:#fff;
-      font-size:16px;
-      cursor:pointer;
-    }
-    .buttons button.active {
-      background-color:#007bff;
-    }
-    .ad-card {
-      background-color:#292929;
-      padding:10px;
-      margin:5px 0;
-      border-radius:5px;
-      text-align:center;
-      cursor:pointer;
-    }
-    .join-buttons button {
-      margin:5px 0;
-      width:100%;
-      padding:10px;
-      background-color:#444;
-      border:none;
-      border-radius:5px;
-      cursor:pointer;
-      color:#fff;
-    }
-    .withdraw-form {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
       display:flex;
       flex-direction:column;
-      margin-top:10px;
     }
-    .withdraw-form input, .withdraw-form select {
-      margin-bottom:10px;
-      padding:8px;
-      border-radius:5px;
-      border:none;
-    }
-    .copy-link {
-      background-color:#007bff;
-      padding:8px;
-      border:none;
-      border-radius:5px;
-      color:#fff;
-      cursor:pointer;
-    }
+
+    /* Header */
+    .header{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#e0e0e0;border-bottom:1px solid #ccc;}
+    .avatar{width:54px;height:54px;border-radius:12px;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px}
+    .user-info{flex:1}
+    .user-info small{display:block;color:var(--muted);font-size:12px}
+    .welcome{padding:12px 14px}
+    .card{background:var(--card);border-radius:14px;padding:12px;margin:12px}
+
+    /* Summary */
+    .summary{display:flex;gap:10px;justify-content:space-between}
+    .summary .item{flex:1;background:#ffffff;padding:12px;border-radius:10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+    .amount{font-size:20px;font-weight:700}
+
+    /* Main area */
+    .main{flex:1;padding-bottom:86px}
+
+    /* Bottom Navigation */
+    .nav{position:fixed;left:10px;right:10px;bottom:12px;height:62px;background:var(--card);border-radius:18px;display:flex;align-items:center;justify-content:space-around;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+    .nav button{flex:1;margin:0 6px;border:0;padding:10px;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;font-size:14px}
+    .nav button:active{transform:translateY(2px)}
+
+    .nav .home-btn{background:#1fa54a} /* green */
+    .nav .earn-btn{background:#0c78ff} /* blue */
+    .nav .withdraw-btn{background:#ff8a00} /* orange */
+    .nav .profile-btn{background:#8b5cf6} /* purple */
+
+    /* Pages */
+    .page{display:none;padding:12px}
+    .page.active{display:block}
+
+    /* Earn page */
+    .ads-list{display:flex;flex-direction:column;gap:10px}
+    .ad-card{background:#ffffff;padding:12px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+    .ad-meta{font-size:13px;color:var(--muted)}
+    .watch-btn{display:inline-block;margin-top:10px;padding:8px 12px;border-radius:10px;border:0;font-weight:700;background:#06b6d4;color:#fff;cursor:pointer}
+
+    /* Telegram join buttons */
+    .join-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .join-btns button{flex:1;padding:8px 12px;border-radius:10px;border:0;font-weight:700;background:#0c78ff;color:#fff;cursor:pointer}
+
+    /* Overlay */
+    .overlay{position:fixed;inset:0;background:#ffffff;display:flex;align-items:center;justify-content:center;z-index:100;display:none}
+    .overlay .modal{background:#ffffff;padding:18px;border-radius:12px;max-width:420px;width:92%;border:1px solid #ccc;text-align:center}
+    .overlay h3{color:#000}
+    .overlay p{color:#333;font-size:14px}
+
   </style>
 </head>
 <body>
 
-  <!-- Header with Profile -->
-  <div class="header" id="header">
-    <img src="" alt="Profile" class="profile-pic" id="profilePic">
-    <div>
-      <div id="userName">User Name</div>
-      <div id="welcomeMessage">Welcome!</div>
+  <!-- Header -->
+  <header class="header">
+    <div class="avatar" id="avatarEl">?</div>
+    <div class="user-info">
+      <small id="tgHandle">@username</small>
+      <div id="displayName">অতিথি</div>
     </div>
-  </div>
+  </header>
 
-  <!-- Main Content -->
-  <div class="content" id="mainContent">
-    <!-- Content will change according to button -->
-  </div>
+  <main class="main">
 
-  <!-- Bottom Buttons -->
-  <div class="buttons">
-    <button id="homeBtn" class="active">Home</button>
-    <button id="earnBtn">Earn</button>
-    <button id="withdrawBtn">Withdraw</button>
-    <button id="profileBtn">Profile</button>
-  </div>
-
-<script>
-  // ==== Telegram Bot Config ====
-  const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"; // এখানে আপনার বট টোকেন দিন
-  const ADMIN_ID = "YOUR_ADMIN_TELEGRAM_ID"; // এখানে এডমিন আইডি দিন
-
-  // ==== Dummy User Data ====
-  let user = {
-    telegramId: "123456789",
-    name: "Zihad Sheikh",
-    username: "@zihad",
-    profilePic: "https://via.placeholder.com/50",
-    earnings: 0,
-    adsWatched: 0,
-    referrals: 0,
-    referLink: "https://t.me/your_bot?start=123456789"
-  };
-
-  // ==== Initialize ====
-  const mainContent = document.getElementById('mainContent');
-  const profilePic = document.getElementById('profilePic');
-  const userName = document.getElementById('userName');
-  const welcomeMessage = document.getElementById('welcomeMessage');
-
-  profilePic.src = user.profilePic;
-  userName.textContent = user.name;
-  welcomeMessage.textContent = `Welcome, ${user.name}!`;
-
-  // ==== Buttons ====
-  const homeBtn = document.getElementById('homeBtn');
-  const earnBtn = document.getElementById('earnBtn');
-  const withdrawBtn = document.getElementById('withdrawBtn');
-  const profileBtn = document.getElementById('profileBtn');
-
-  function setActive(button) {
-    document.querySelectorAll('.buttons button').forEach(btn=>btn.classList.remove('active'));
-    button.classList.add('active');
-  }
-
-  // ==== Render Sections ====
-  function renderHome() {
-    setActive(homeBtn);
-    mainContent.innerHTML = `
-      <div class="card">Income: $${user.earnings}</div>
-      <div class="card">Ads Watched: ${user.adsWatched}</div>
-      <div class="card">Referrals: ${user.referrals}</div>
-    `;
-  }
-
-  function renderEarn() {
-    setActive(earnBtn);
-    mainContent.innerHTML = `
-      <div class="card">Earn Rewards</div>
-      <div>Ads watched today: ${user.adsWatched}</div>
-      <div>Max Ads per day: 5</div>
-      <div class="ad-card" onclick="watchAd()">Watch Ad +$0.10</div>
-      <div class="join-buttons">
-        <button onclick="joinTelegram('channel1')">Join Telegram Channel 1</button>
-        <button onclick="joinTelegram('channel2')">Join Telegram Channel 2</button>
-        <button onclick="joinTelegram('channel3')">Join Telegram Channel 3</button>
+    <!-- Welcome Card -->
+    <section class="welcome">
+      <div class="card">
+        <div><strong id="welcomeText">স্বাগতম</strong></div>
+        <div class="muted small">আপনি এখানে ইনকাম শুরু করতে পারেন</div>
       </div>
-    `;
-  }
 
-  function watchAd() {
-    if(user.adsWatched >= 5){
-      alert("You reached maximum ads for today!");
-      return;
-    }
-    user.adsWatched += 1;
-    user.earnings += 0.10; // Monetag ad earning
-    renderEarn();
-  }
+      <!-- Summary -->
+      <div class="card summary">
+        <div class="item">
+          <div class="muted small">টাকা</div>
+          <div class="amount" id="balanceAmount">0.00৳</div>
+        </div>
+        <div class="item">
+          <div class="muted small">দেখা এড</div>
+          <div class="amount" id="adsCount">0</div>
+        </div>
+        <div class="item">
+          <div class="muted small">রেফারাল</div>
+          <div class="amount" id="refCount">0</div>
+        </div>
+      </div>
+    </section>
 
-  function joinTelegram(channel){
-    alert(`Joined ${channel}, reward added!`);
-    user.earnings += 0.50; // Joining reward
-    renderEarn();
-  }
+    <!-- Home Page -->
+    <section id="homePage" class="page active">
+      <div class="card">
+        <h3>হোম</h3>
+        <p class="muted small">Home বাটনে চাপ দিলে আপনার Telegram নাম, Avatar এবং Welcome দেখানো হবে।</p>
+      </div>
+    </section>
 
-  function renderWithdraw() {
-    setActive(withdrawBtn);
-    mainContent.innerHTML = `
-      <div class="card">Your Balance: $${user.earnings.toFixed(2)}</div>
-      <button onclick="showWithdrawForm()">Withdraw</button>
-      <div id="withdrawFormContainer"></div>
-    `;
-  }
+    <!-- Earn Page -->
+    <section id="earnPage" class="page">
+      <div class="card">
+        <h3>Earn Rewards</h3>
+        <p class="muted small">প্রতি এডে ইনকাম দেখুন এবং প্রতিদিনের লিমিট আছে</p>
 
-  function showWithdrawForm() {
-    const container = document.getElementById('withdrawFormContainer');
-    container.innerHTML = `
-      <form class="withdraw-form" onsubmit="requestWithdraw(event)">
-        <select required id="paymentMethod">
-          <option value="">Select Payment Method</option>
-          <option value="paypal">PayPal</option>
-          <option value="bank">Bank Transfer</option>
+        <div class="ads-list" id="adsList">
+          <!-- Monetag Ad injection point -->
+          <!-- Monetag Ad ID বসাবেন এখানে JS দিয়ে -->
+        </div>
+
+        <div class="join-btns">
+          <button id="joinBtn1">টেলিগ্রাম জয়েন ১</button>
+          <button id="joinBtn2">টেলিগ্রাম জয়েন ২</button>
+          <button id="joinBtn3">টেলিগ্রাম জয়েন ৩</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Overlay (full screen white for button clicks) -->
+    <div id="overlay" class="overlay">
+      <div class="modal">
+        <h3>লোড হচ্ছে...</h3>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="nav">
+    <button class="home-btn" id="navHome">Home</button>
+    <button class="earn-btn" id="navEarn">Earn</button>
+    <button class="withdraw-btn" id="navWithdraw">Withdraw</button>
+    <button class="profile-btn" id="navProfile">Profile</button>
+      </nav>
+      <!-- Withdraw Page -->
+  <section id="withdrawPage" class="page">
+    <div class="card">
+      <h3>Withdraw</h3>
+      <p class="muted small">আপনার ইনকাম এবং পাওয়া টাকার তথ্য এখানে দেখুন</p>
+      <div class="card summary">
+        <div class="item">
+          <div class="muted small">মোট ইনকাম</div>
+          <div class="amount" id="withdrawBalance">0.00৳</div>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Payment Method</h4>
+        <select id="paymentMethod">
+          <option value="">পেমেন্ট মেথড নির্বাচন করুন</option>
+          <option value="bkash">Bkash</option>
+          <option value="nagad">Nagad</option>
+          <option value="rocket">Rocket</option>
         </select>
-        <input type="text" id="paymentDetails" placeholder="Enter account/email" required>
-        <input type="number" id="withdrawAmount" placeholder="Amount" max="${user.earnings.toFixed(2)}" required>
-        <input type="file" id="withdrawScreenshot" required>
-        <button type="submit">Submit Withdraw</button>
-      </form>
-    `;
-  }
+        <input type="text" id="paymentDetail" placeholder="নাম/নাম্বার/এড্রেস লিখুন" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;border:1px solid #ccc"/>
+        <button id="withdrawRequestBtn" style="margin-top:8px;padding:10px 12px;background:#ff8a00;color:#fff;border:0;border-radius:10px;font-weight:700;cursor:pointer;">Withdraw Request</button>
+      </div>
+    </div>
+  </section>
 
-  function requestWithdraw(e){
-    e.preventDefault();
-    const method = document.getElementById('paymentMethod').value;
-    const details = document.getElementById('paymentDetails').value;
-    const amount = parseFloat(document.getElementById('withdrawAmount').value);
-    const screenshot = document.getElementById('withdrawScreenshot').files[0];
+  <!-- Profile Page -->
+  <section id="profilePage" class="page">
+    <div class="card">
+      <h3>Profile</h3>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="avatar" id="profileAvatar">?</div>
+        <div>
+          <div id="profileName">@username</div>
+          <div class="muted small" id="profileUserName">User Name</div>
+        </div>
+      </div>
+      <div class="card summary" style="margin-top:12px">
+        <div class="item">
+          <div class="muted small">টাকা</div>
+          <div class="amount" id="profileBalance">0.00৳</div>
+        </div>
+        <div class="item">
+          <div class="muted small">দেখা এড</div>
+          <div class="amount" id="profileAds">0</div>
+        </div>
+        <div class="item">
+          <div class="muted small">রেফারাল</div>
+          <div class="amount" id="profileRef">0</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input type="text" id="refLink" readonly style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc"/>
+        <button id="copyRefBtn" style="margin-top:6px;padding:10px 12px;background:#06b6d4;color:#fff;border:0;border-radius:10px;font-weight:700;cursor:pointer;width:100%;">Copy Referral Link</button>
+      </div>
+    </div>
+  </section>
 
-    if(amount > user.earnings){
-      alert("Not enough balance");
-      return;
+  <script>
+    // ********** Configurations **********
+    const monetagId = "YOUR_MONETAG_ID_HERE"; // Monetag ID বসাবেন এখানে
+    const telegramBotToken = "YOUR_BOT_TOKEN_HERE"; // Telegram Bot Token
+    const adminId = "YOUR_ADMIN_ID_HERE"; // Telegram Admin ID
+
+    // ********** Dummy Data **********
+    let userData = {
+      username: "@demo_user",
+      name: "Demo User",
+      avatar: "D",
+      balance: 0.0,
+      adsWatched: 0,
+      referrals: 0,
+      refCode: "XYZ123"
+    };
+
+    // ********** Page Switching **********
+    const pages = {home: "homePage", earn: "earnPage", withdraw: "withdrawPage", profile: "profilePage"};
+    function showPage(page){
+      Object.values(pages).forEach(p => document.getElementById(p).classList.remove("active"));
+      document.getElementById(pages[page]).classList.add("active");
+      document.getElementById("overlay").style.display="block";
+      setTimeout(()=>{document.getElementById("overlay").style.display="none";}, 300);
+      updateDataUI();
     }
 
-    // TODO: Send request to admin via Telegram Bot with screenshot
-    alert(`Withdraw request sent for $${amount} via ${method}`);
-    user.earnings -= amount;
-    renderWithdraw();
-  }
+    document.getElementById("navHome").addEventListener("click", ()=>showPage("home"));
+    document.getElementById("navEarn").addEventListener("click", ()=>showPage("earn"));
+    document.getElementById("navWithdraw").addEventListener("click", ()=>showPage("withdraw"));
+    document.getElementById("navProfile").addEventListener("click", ()=>showPage("profile"));
 
-  function renderProfile() {
-    setActive(profileBtn);
-    mainContent.innerHTML = `
-      <div class="card">
-        <img src="${user.profilePic}" alt="Profile" style="width:50px;border-radius:50%">
-        <div>Name: ${user.name}</div>
-        <div>Username: ${user.username}</div>
-      </div>
-      <div class="card">Balance: $${user.earnings.toFixed(2)}</div>
-      <div class="card">Ads Watched: ${user.adsWatched}</div>
-      <div class="card">Referrals: ${user.referrals}</div>
-      <div class="card">
-        <input type="text" value="${user.referLink}" readonly id="refLink">
-        <button class="copy-link" onclick="copyReferral()">Copy Link</button>
-      </div>
-    `;
-  }
+    // ********** Update Data UI **********
+    function updateDataUI(){
+      document.getElementById("avatarEl").innerText = userData.avatar;
+      document.getElementById("displayName").innerText = userData.name;
+      document.getElementById("tgHandle").innerText = userData.username;
+      document.getElementById("welcomeText").innerText = `স্বাগতম ${userData.name}`;
 
-  function copyReferral() {
-    const copyText = document.getElementById('refLink');
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    document.execCommand("copy");
-    alert("Referral link copied!");
-  }
+      document.getElementById("balanceAmount").innerText = `${userData.balance.toFixed(2)}৳`;
+      document.getElementById("adsCount").innerText = userData.adsWatched;
+      document.getElementById("refCount").innerText = userData.referrals;
 
-  // ==== Button Event Listeners ====
-  homeBtn.addEventListener('click', renderHome);
-  earnBtn.addEventListener('click', renderEarn);
-  withdrawBtn.addEventListener('click', renderWithdraw);
-  profileBtn.addEventListener('click', renderProfile);
+      document.getElementById("withdrawBalance").innerText = `${userData.balance.toFixed(2)}৳`;
 
-  // Initial load
-  renderHome();
+      document.getElementById("profileAvatar").innerText = userData.avatar;
+      document.getElementById("profileName").innerText = userData.username;
+      document.getElementById("profileUserName").innerText = userData.name;
+      document.getElementById("profileBalance").innerText = `${userData.balance.toFixed(2)}৳`;
+      document.getElementById("profileAds").innerText = userData.adsWatched;
+      document.getElementById("profileRef").innerText = userData.referrals;
+      document.getElementById("refLink").value = `https://t.me/tapcash_v1_bot?start=${userData.refCode}`;
+    }
 
-</script>
+    // ********** Copy Referral **********
+    document.getElementById("copyRefBtn").addEventListener("click", ()=>{
+      navigator.clipboard.writeText(document.getElementById("refLink").value);
+      alert("Referral Link Copied!");
+    });
+
+    // ********** Withdraw Request **********
+    document.getElementById("withdrawRequestBtn").addEventListener("click", ()=>{
+      const method = document.getElementById("paymentMethod").value;
+      const detail = document.getElementById("paymentDetail").value.trim();
+      if(!method || !detail){alert("সব তথ্য পূরণ করুন"); return;}
+      if(userData.balance<=0){alert("আপনার অ্যাকাউন্টে যথেষ্ট টাকা নেই"); return;}
+      // Telegram Bot API call
+      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          chat_id: adminId,
+          text: `New Withdraw Request\nUser: ${userData.username}\nAmount: ${userData.balance}৳\nMethod: ${method}\nDetail: ${detail}`
+        })
+      }).then(res=>res.json()).then(data=>{alert("Withdraw Request Sent!");})
+    });
+
+    // ********** Monetag Ad Injection **********
+    function injectMonetagAd(){
+      const adList = document.getElementById("adsList");
+      for(let i=0;i<5;i++){
+        const adCard = document.createElement("div");
+        adCard.className = "ad-card";
+        adCard.innerHTML = `
+          <div>Ad Slot ${i+1}</div>
+          <div class="ad-meta">Earn ৳0.50 per ad</div>
+          <button class="watch-btn" onclick="watchAd(${i})">Watch Ad</button>
+        `;
+        adList.appendChild(adCard);
+      }
+    }
+    injectMonetagAd();
+
+    // ********** Watch Ad **********
+    function watchAd(index){
+      userData.adsWatched += 1;
+      userData.balance += 0.50; // Monetag earning
+      updateDataUI();
+      alert("Ad watched! Earned ৳0.50");
+    }
+
+    // ********** Telegram Join Buttons **********
+    document.getElementById("joinBtn1").addEventListener("click", ()=>{alert("Joined Telegram 1: Earned Points!"); userData.balance +=0.50; updateDataUI();});
+    document.getElementById("joinBtn2").addEventListener("click", ()=>{alert("Joined Telegram 2: Earned Points!"); userData.balance +=0.50; updateDataUI();});
+    document.getElementById("joinBtn3").addEventListener("click", ()=>{alert("Joined Telegram 3: Earned Points!"); userData.balance +=0.50; updateDataUI();});
+
+    // ********** Initial UI Load **********
+    updateDataUI();
+  </script>
 </body>
   </html>
