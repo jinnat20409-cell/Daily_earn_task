@@ -1,311 +1,195 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>মিনি অ্যাপ — ডেমো</title>
+  <meta charset="UTF-8">
+  <title>Mini App Demo</title>
   <style>
-    :root{
-      --bg:#ffffff; /* সাদা ব্যাকগ্রাউন্ড */
-      --text:#000000; /* কালো লেখা */
-      --card:#f0f0f0;
-      --muted:#555555;
-      --btn-radius:12px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
-    .header{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border-bottom:1px solid #ccc}
-    .avatar{width:54px;height:54px;border-radius:12px;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px}
-    .user-info{flex:1}
-    .user-info small{display:block;color:var(--muted);font-size:12px}
-    .welcome{padding:12px 14px}
-    .card{background:var(--card);border-radius:14px;padding:12px;margin:12px 0}
-
-    .summary{display:flex;gap:10px;justify-content:space-between}
-    .summary .item{flex:1;background:#eaeaea;padding:12px;border-radius:10px;text-align:center}
-    .amount{font-size:20px;font-weight:700}
-
-    .main{flex:1;padding-bottom:86px}
-
-    .nav{position:fixed;left:10px;right:10px;bottom:12px;height:62px;background:#ddd;border-radius:18px;display:flex;align-items:center;justify-content:space-around;padding:8px}
-    .nav button{flex:1;margin:0 6px;border:0;padding:10px;border-radius:12px;color:#000;font-weight:700;cursor:pointer;background:#06b6d4}
-    .nav button:active{transform:translateY(2px)}
-
-    .page{display:none;padding:12px}
-    .page.active{display:block}
-
-    .ads-list{display:flex;flex-direction:column;gap:10px}
-    .ad-card{background:#f5f5f5;padding:12px;border-radius:10px}
-    .ad-meta{font-size:13px;color:var(--muted)}
-    .watch-btn{display:inline-block;margin-top:10px;padding:8px 12px;border-radius:10px;border:0;font-weight:700;background:#0c78ff;color:#fff;cursor:pointer}
-
-    .form-row{display:flex;flex-direction:column;margin-bottom:10px}
-    input,select,textarea{padding:10px;border-radius:10px;border:1px solid #ccc;background:#fff;color:#000}
-    .submit-btn{padding:10px;border-radius:12px;border:0;font-weight:700;background:#06b6d4;color:#fff;cursor:pointer}
-
-    .muted{color:var(--muted)}
-    .ref-box{display:flex;gap:8px;align-items:center}
-    .copy-btn{padding:8px;border-radius:8px;border:0;background:#0c78ff;color:#fff;font-weight:700;cursor:pointer}
+    body { margin:0; font-family: Arial, sans-serif; background:#fff; color:#000; }
+    .container { padding:15px; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .navbar { position:fixed; bottom:0; left:0; width:100%; display:flex; justify-content:space-around; background:#f0f0f0; padding:10px 0; border-top:1px solid #ccc; }
+    .navbar button { flex:1; border:none; background:none; font-size:16px; cursor:pointer; padding:10px; transition:0.3s; }
+    .navbar button.active { background:#000; color:#fff; border-radius:8px; }
+    .card { padding:15px; margin:10px 0; border-radius:10px; border:1px solid #ddd; background:#fafafa; }
+    .input-field { padding:10px; border:1px solid #ccc; border-radius:5px; width:100%; margin-bottom:10px; }
+    .button { background:#000; color:#fff; padding:10px 15px; border:none; border-radius:8px; cursor:pointer; }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
-  <header class="header">
-    <div class="avatar" id="avatarEl">?</div>
-    <div class="user-info">
-      <small id="tgHandle" class="muted">লগইন করুন</small>
-      <div id="displayName">@username</div>
+  <div class="container">
+    <!-- Home -->
+    <div id="home" class="section active">
+      <h2 id="welcome">Welcome!</h2>
+      <p><b>Name:</b> <span id="tgName">Loading...</span></p>
+      <div class="card">
+        <p><b>Total Income:</b> <span id="income">0</span> ৳</p>
+        <p><b>Ads Watched:</b> <span id="adsCount">0</span></p>
+        <p><b>Referrals:</b> <span id="refCount">0</span></p>
+      </div>
     </div>
-  </header>
 
-  <main class="main">
-    <section class="welcome">
+    <!-- Earn -->
+    <div id="earn" class="section">
+      <h2>Earn Rewards</h2>
       <div class="card">
-        <div><strong id="welcomeText">স্বাগতম</strong></div>
-        <div class="muted small">আপনি এখানে ইনকাম শুরু করতে পারেন</div>
+        <p>Watch Ads & Earn Points</p>
+        <!-- Monetag Ads -->
+        <div id="monetag-ad"></div>
+        <button class="button" onclick="watchAd()">Earn by Watching Ad</button>
       </div>
-
-      <div class="card summary">
-        <div class="item">
-          <div class="muted small">টাকা</div>
-          <div class="amount" id="balanceAmount">0.00৳</div>
-        </div>
-        <div class="item">
-          <div class="muted small">দেখা এড</div>
-          <div class="amount" id="adsCount">0</div>
-        </div>
-        <div class="item">
-          <div class="muted small">রেফারাল</div>
-          <div class="amount" id="refCount">0</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pages -->
-    <section id="homePage" class="page active">
       <div class="card">
-        <h3>Home</h3>
-        <p class="muted small">নিচের বাটন থেকে অন্য ফিচার এ যান — Earn, Withdraw, Profile</p>
+        <p>Join Telegram Channels</p>
+        <button class="button">Join Channel 1</button>
+        <button class="button">Join Channel 2</button>
+        <button class="button">Join Channel 3</button>
       </div>
-    </section>
+    </div>
 
-    <section id="earnPage" class="page">
+    <!-- Withdraw -->
+    <div id="withdraw" class="section">
+      <h2>Withdraw</h2>
+      <p><b>Balance:</b> <span id="balanceWithdraw">0</span> ৳</p>
+      <select id="paymentMethod" class="input-field">
+        <option value="">Select Method</option>
+        <option value="bkash">Bkash</option>
+        <option value="nagad">Nagad</option>
+        <option value="paypal">PayPal</option>
+      </select>
+      <input type="text" id="paymentDetails" class="input-field" placeholder="Enter Account Details">
+      <input type="number" id="withdrawAmount" class="input-field" placeholder="Enter Amount">
+      <button class="button" onclick="requestWithdraw()">Submit Withdraw</button>
+    </div>
+
+    <!-- Profile -->
+    <div id="profile" class="section">
+      <h2>Profile</h2>
+      <p><b>Name:</b> <span id="profileName">Loading...</span></p>
+      <p><b>Username:</b> <span id="profileUsername">@user</span></p>
+      <p><b>Balance:</b> <span id="profileBalance">0</span> ৳</p>
+      <p><b>Ads Watched:</b> <span id="profileAds">0</span></p>
+      <p><b>Referrals:</b> <span id="profileRefs">0</span></p>
       <div class="card">
-        <h3>Earn Rewards</h3>
-        <div class="ads-list" id="adsList"></div>
-        <div class="card">
-          <h4>টেলিগ্রামে জয়েন করে রিওয়ার্ড</h4>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="watch-btn" id="joinBtn1">জয়েন ১</button>
-            <button class="watch-btn" id="joinBtn2">জয়েন ২</button>
-            <button class="watch-btn" id="joinBtn3">জয়েন ৩</button>
-          </div>
-        </div>
+        <p>Your Referral Link:</p>
+        <input type="text" id="refLink" class="input-field" readonly>
+        <button class="button" onclick="copyRefLink()">Copy Link</button>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section id="withdrawPage" class="page">
-      <div class="card">
-        <h3>Withdrawal</h3>
-        <div class="form-row">
-          <label class="muted small">বর্তমান ব্যালান্স</label>
-          <div id="withdrawBalance">0.00৳</div>
-        </div>
-        <div class="form-row">
-          <label class="muted small">পেমেন্ট মেথড</label>
-          <select id="payMethod">
-            <option value="bkash">bKash</option>
-            <option value="nagad">Nagad</option>
-            <option value="rocket">Rocket</option>
-            <option value="bank">Bank Transfer</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="form-row" id="methodFields"></div>
-        <div class="form-row">
-          <label class="muted small">রিকোয়েস্ট এমাউন্ট (৳)</label>
-          <input type="number" id="withdrawAmount" placeholder="পরিমাণ লিখুন" />
-        </div>
-        <button class="submit-btn" id="requestWithdraw">উইথড্র রিকোয়েস্ট পাঠান</button>
-      </div>
-    </section>
-
-    <section id="profilePage" class="page">
-      <div class="card">
-        <h3>প্রোফাইল</h3>
-        <div style="display:flex;gap:12px;align-items:center">
-          <div class="avatar" id="profileAvatar">?</div>
-          <div>
-            <div id="profileName">@username</div>
-            <div class="muted small" id="profileUsername">@username</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="muted small">ইনকাম (টাকা)</div>
-          <div id="profileBalance" style="font-weight:700">0.00৳</div>
-          <div class="muted small">এড দেখা: <span id="profileAds">0</span></div>
-          <div class="muted small">রেফার: <span id="profileRef">0</span></div>
-        </div>
-        <div class="card">
-          <h4>রেফার লিংক</h4>
-          <div class="ref-box">
-            <input id="refLink" readonly style="flex:1;padding:8px;border-radius:8px;border:1px solid #ccc" />
-            <button class="copy-btn" id="copyRef">কপি</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <nav class="nav">
-    <button id="navHome">Home</button>
-    <button id="navEarn">Earn</button>
-    <button id="navWithdraw">Withdraw</button>
-    <button id="navProfile">Profile</button>
-  </nav>
+  <!-- Navbar -->
+  <div class="navbar">
+    <button class="active" onclick="showSection('home', this)">Home</button>
+    <button onclick="showSection('earn', this)">Earn</button>
+    <button onclick="showSection('withdraw', this)">Withdraw</button>
+    <button onclick="showSection('profile', this)">Profile</button>
+  </div>
 
   <script>
-    const CONFIG = {
-      DAILY_AD_LIMIT: 1000,
-      PER_AD_AMOUNT: 0.4,
-      MIN_WITHDRAW: 1,
-      REFERRAL_REWARD: 5,
-      TELEGRAM_CHANNELS:[
-        'https://t.me/dailyEernTaskBot',
-        'https://t.me/yourchannel2',
-        'https://t.me/yourchannel3'
-      ]
-      // Telegram Bot settings:
-      // BOT_TOKEN: '7567052001:AAHrSf6mQPzIsI-_h-zHbYPPaoxO1OMZSH0',
-      // ADMIN_CHAT_ID: '6750565670'
+    // Telegram Bot Setup
+    const BOT_TOKEN = "7567052001:AAHrSf6mQPzIsI-_h-zHbYPPaoxO1OMZSH0"; 
+    const ADMIN_CHAT_ID = "6750565670"; 
+    const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    // Monetag Ads Setup
+    const MONETAG_ZONE_ID = "YOUR_ZONE_ID"; // এখানে আপনার Monetag zone id বসাবেন
+    document.getElementById("monetag-ad").innerHTML = `<script src="https://a.monetag.com/${MONETAG_ZONE_ID}"><\/script>`;
+
+    // User Data (Local Storage)
+    let user = {
+      name: "@josimm123",
+      username: "@josimm123",
+      income: parseFloat(localStorage.getItem("income") || 0),
+      ads: parseInt(localStorage.getItem("ads") || 0),
+      refs: parseInt(localStorage.getItem("refs") || 0)
     };
 
-    const STORAGE_KEY='MonetagMiniBot_bot';
-    let user = loadUser();
-
-    function loadUser(){
-      const raw=localStorage.getItem(STORAGE_KEY);
-      if(raw) return JSON.parse(raw);
-      const newUser={id:'user_'+Math.random().toString(36).slice(2,9),first_name:'@username',username:'',balance:0,adsWatchedTotal:0,adsWatchedToday:0,adsWatchedDate:null,referrals:0,referrer:null};
-      saveUser(newUser);
-      return newUser;
-    }
-    function saveUser(u){ localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); }
-
-    function renderHeader(){
-      document.getElementById('displayName').innerText = user.first_name;
-      document.getElementById('tgHandle').innerText = user.username?('@'+user.username):'@username';
-      document.getElementById('avatarEl').innerText = user.first_name[0]||'?';
-      document.getElementById('profileAvatar').innerText = user.first_name[0]||'?';
-    }
-    function renderSummary(){
-      document.getElementById('balanceAmount').innerText=(user.balance||0).toFixed(2)+'৳';
-      document.getElementById('adsCount').innerText=user.adsWatchedTotal||0;
-      document.getElementById('refCount').innerText=user.referrals||0;
-    }
-    function renderProfile(){
-      document.getElementById('profileName').innerText=user.first_name;
-      document.getElementById('profileUsername').innerText=user.username?('@'+user.username):'@username';
-      document.getElementById('profileBalance').innerText=(user.balance||0).toFixed(2)+'৳';
-      document.getElementById('profileAds').innerText=user.adsWatchedTotal||0;
-      document.getElementById('profileRef').innerText=user.referrals||0;
-      const base=window.location.origin+window.location.pathname;
-      document.getElementById('refLink').value=base+'?ref='+user.id;
+    // Show Home/Profile Data
+    function updateUI() {
+      document.getElementById("tgName").innerText = user.name;
+      document.getElementById("welcome").innerText = "Welcome " + user.name;
+      document.getElementById("income").innerText = user.income;
+      document.getElementById("adsCount").innerText = user.ads;
+      document.getElementById("refCount").innerText = user.refs;
+      document.getElementById("balanceWithdraw").innerText = user.income;
+      document.getElementById("profileName").innerText = user.name;
+      document.getElementById("profileUsername").innerText = user.username;
+      document.getElementById("profileBalance").innerText = user.income;
+      document.getElementById("profileAds").innerText = user.ads;
+      document.getElementById("profileRefs").innerText = user.refs;
+      document.getElementById("refLink").value = `https://t.me/MonetagMiniBot_bot?startapp=${ADMIN_CHAT_ID}`;
     }
 
-    function renderEarn(){
-      const list=document.getElementById('adsList'); list.innerHTML='';
-      for(let i=1;i<=CONFIG.DAILY_AD_LIMIT;i++){
-        const div=document.createElement('div'); div.className='ad-card';
-        div.innerHTML=`<div style="display:flex;justify-content:space-between">
-        <div><div style="font-weight:700">এড দেখুন ${i}</div><div class="ad-meta">আজ দেখা ${user.adsWatchedToday}</div></div>
-        <button class="watch-btn" data-ad="${i}">Watch</button>
-        </div>`;
-        list.appendChild(div);
-      }
-      document.querySelectorAll('.watch-btn').forEach(btn=>{
-        btn.onclick=()=>{
-          if(user.adsWatchedToday>=CONFIG.DAILY_AD_LIMIT){ alert('আজকের লিমিট শেষ'); return;}
-          user.adsWatchedToday++; user.adsWatchedTotal++; user.balance+=CONFIG.PER_AD_AMOUNT; saveUser(user); renderAll();
-          alert('ধন্যবাদ! এড দেখার জন্য পয়েন্ট/টাকা যোগ করা হয়েছে।');
-renderAll();
-        }
-      });
-    }
-
-    // Join buttons
-    CONFIG.TELEGRAM_CHANNELS.forEach((link,idx)=>{
-      const btn=document.getElementById('joinBtn'+(idx+1));
-      if(btn){ btn.onclick=()=>{
-        alert('আপনি টেলিগ্রামে জয়েন করার জন্য পয়েন্ট পেয়েছেন!');
-        user.balance+=CONFIG.PER_AD_AMOUNT; // জয়েন বোনাস
-        saveUser(user); renderAll();
-      }}
-    });
-
-    // Withdraw section
-    document.getElementById('payMethod').onchange=function(){
-      const container=document.getElementById('methodFields'); container.innerHTML='';
-      const val=this.value;
-      if(val==='bkash'||val==='nagad'||val==='rocket'){
-        const inp=document.createElement('input'); inp.placeholder='নাম্বার লিখুন'; inp.id='methodInput'; container.appendChild(inp);
-      } else if(val==='bank'){
-        const inp=document.createElement('input'); inp.placeholder='Bank Account No'; inp.id='methodInput'; container.appendChild(inp);
-      } else {
-        const inp=document.createElement('textarea'); inp.placeholder='Other info'; inp.id='methodInput'; container.appendChild(inp);
-      }
-    }
-
-    document.getElementById('requestWithdraw').onclick=function(){
-      const amt=parseFloat(document.getElementById('withdrawAmount').value||0);
-      if(amt<CONFIG.MIN_WITHDRAW){ alert('মিনিমাম উইথড্র: '+CONFIG.MIN_WITHDRAW+'৳'); return;}
-      if(amt>user.balance){ alert('আপনার একাউন্টে পর্যাপ্ত ব্যালান্স নেই'); return;}
-      const method=document.getElementById('payMethod').value;
-      const details=document.getElementById('methodInput').value||'';
-      user.balance-=amt; saveUser(user); renderAll();
-      alert('আপনার উইথড্র রিকোয়েস্ট এডমিনকে পাঠানো হয়েছে!\nAmount: '+amt+'৳\nMethod: '+method+'\nDetails: '+details);
-      // এখানে Telegram Bot API কল ব্যবহার করে অ্যাডমিনে পাঠানো যাবে
-    }
-
-    // Referral copy
-    document.getElementById('copyRef').onclick=function(){
-      document.getElementById('refLink').select();
-      document.execCommand('copy');
-      alert('রেফার লিংক কপি হয়েছে!');
-    }
+    updateUI();
 
     // Navigation
-    function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    document.getElementById('navHome').onclick=()=>showPage('homePage');
-    document.getElementById('navEarn').onclick=()=>showPage('earnPage');
-    document.getElementById('navWithdraw').onclick=()=>showPage('withdrawPage');
-    document.getElementById('navProfile').onclick=()=>showPage('profilePage');
-
-    function resetDaily(){
-      const today=new Date().toDateString();
-      if(user.adsWatchedDate!==today){ user.adsWatchedToday=0; user.adsWatchedDate=today; saveUser(user); }
+    function showSection(id, btn) {
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.querySelectorAll(".navbar button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
     }
 
-    function renderAll(){ resetDaily(); renderHeader(); renderSummary(); renderProfile(); renderEarn(); }
+    // Earn by watching ads
+    function watchAd() {
+      user.ads += 1;
+      user.income += 1; // প্রতি অ্যাডে 1 টাকা
+      saveUser();
+      updateUI();
+    }
 
-    // Referral logic on load
-    (function(){
-      const urlParams=new URLSearchParams(window.location.search);
-      const ref=urlParams.get('ref');
-      if(ref && ref!==user.id){
-        let refData=localStorage.getItem('ref_'+ref);
-        if(!refData){
-          user.referrer=ref; saveUser(user);
-          localStorage.setItem('ref_'+ref,'done');
-          // এখানে referrer ব্যালান্সে রেফার বোনাস যোগ করা যাবে
-          const refUserRaw=localStorage.getItem(STORAGE_KEY); // সরল উদাহরণ, বাস্তব অ্যাপে আলাদা স্টোরেজ প্রয়োজন
-          // নোট: এই কোড শুধুমাত্র স্থানীয়ভাবে প্রদর্শন করবে; বাস্তব ব্যালান্স যোগ করার জন্য সার্ভার বা ব্যাকএন্ড লাগবে
-        }
+    // Withdraw Request
+    async function requestWithdraw() {
+      let amount = parseFloat(document.getElementById("withdrawAmount").value);
+      let method = document.getElementById("paymentMethod").value;
+      let details = document.getElementById("paymentDetails").value;
+
+      if (amount > user.income) { alert("Insufficient Balance"); return; }
+      if (amount < 10) { alert("Minimum withdraw 10"); return; }
+
+      user.income -= amount;
+      saveUser();
+      updateUI();
+
+      let msg = `Withdraw Request:\nUser: ${user.name}\nAmount: ${amount}\nMethod: ${method}\nDetails: ${details}`;
+      await fetch(TELEGRAM_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: msg })
+      });
+      alert("Withdraw request sent!");
+    }
+
+    // Referral System (when new user joins with link)
+    function addReferral() {
+      user.refs += 1;
+      user.income += 5; // রেফার বোনাস 5 টাকা
+      saveUser();
+      updateUI();
+    }
+
+    // Copy referral link
+    function copyRefLink() {
+      let copyText = document.getElementById("refLink");
+      copyText.select(); 
+      document.execCommand("copy");
+      alert("Referral Link Copied!");
+    }
+
+    // Save user data
+    function saveUser() {
+      localStorage.setItem("income", user.income);
+      localStorage.setItem("ads", user.ads);
+      localStorage.setItem("refs", user.refs);
+    }
+
+    // Check referral from URL
+    window.onload = function() {
+      let params = new URLSearchParams(window.location.search);
+      if (params.has("ref")) {
+        addReferral();
       }
-    })();
-
-    renderAll();
+    };
   </script>
 </body>
-</html>
+  </html>
