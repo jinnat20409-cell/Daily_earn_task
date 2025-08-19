@@ -1,195 +1,417 @@
+<!-- পার্ট ওয়ান শুরু -->
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>TapCash Mini App Clone</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TapCash Mini App</title>
 <style>
-body{margin:0;padding:0;font-family:sans-serif;background:#fff;color:#000;display:flex;flex-direction:column;min-height:100vh;}
-.header{display:flex;align-items:center;padding:12px;background:#f5f5f5;border-bottom:1px solid #ddd;}
-.avatar{width:50px;height:50px;border-radius:50%;background:#0b74ff;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.userinfo{margin-left:10px;}
-.userinfo div{font-weight:700;}
-.userinfo small{color:#555;}
-.main{padding:12px;flex:1;overflow:auto;}
-.card{background:#f5f5f5;padding:12px;border-radius:12px;margin-bottom:12px;}
-.summary{display:flex;gap:10px;margin-top:10px;}
-.summary .item{flex:1;background:#e2f0ff;padding:10px;border-radius:10px;text-align:center;}
-.amount{font-weight:700;font-size:18px;}
-.page{display:none;}
-.page.active{display:block;}
-.ads-list{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
-.ad-card{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid #ddd;background:#fff;}
-.btn{padding:8px 12px;border-radius:8px;border:0;background:#0b74ff;color:#fff;font-weight:700;cursor:pointer;}
-.btn-ghost{background:#fff;border:1px solid #0b74ff;color:#0b74ff;}
-.join-row{display:flex;gap:8px;margin-top:8px;}
-.join-row .btn{flex:1;}
-input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:8px;}
-.ref-box{display:flex;gap:8px;align-items:center;margin-top:8px;}
-.copy-btn{padding:8px;border-radius:8px;border:0;background:#111827;color:#fff;cursor:pointer;}
-.nav{position:fixed;left:0;right:0;bottom:0;height:60px;background:#fff;display:flex;align-items:center;justify-content:space-around;box-shadow:0 -2px 6px rgba(0,0,0,0.1);}
-.nav button{flex:1;margin:0 4px;padding:12px;border-radius:10px;border:0;background:#0b74ff;color:#fff;font-weight:700;cursor:pointer;}
-.flash{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;color:#000;font-weight:700;z-index:9999;font-size:24px;}
+  body { margin:0; padding:0; font-family:sans-serif; background:#fff; color:#000; }
+  .screen { display:none; padding:20px; height:calc(100vh - 60px); box-sizing:border-box; }
+  .screen.active { display:block; }
+  .bottom-nav { position:fixed; bottom:0; left:0; width:100%; height:60px; display:flex; border-top:1px solid #ccc; background:#f9f9f9; }
+  .bottom-nav button { flex:1; border:none; background:#eee; font-size:16px; cursor:pointer; }
+  .bottom-nav button.active { background:#ddd; }
+  .profile-img { width:50px; height:50px; border-radius:50%; margin-right:10px; }
+  .user-info { display:flex; align-items:center; margin-bottom:20px; }
+  .btn { padding:10px 20px; margin:5px 0; display:block; width:100%; font-size:16px; cursor:pointer; }
+  .card { padding:15px; border:1px solid #ccc; margin-bottom:10px; border-radius:8px; }
 </style>
 </head>
 <body>
 
-<div id="flash" class="flash">Loading...</div>
-
-<header class="header">
-  <div id="avatarEl" class="avatar">?</div>
-  <div class="userinfo">
-    <div id="displayName">User</div>
-    <small id="tgHandle">@username</small>
+<!-- Home Screen -->
+<div id="homeScreen" class="screen active">
+  <div class="user-info">
+    <img id="profilePic" class="profile-img" src="" alt="Profile">
+    <div>
+      <div id="userName">User Name</div>
+      <div id="welcomeText">Welcome!</div>
+    </div>
   </div>
-</header>
-
-<main class="main">
-
-  <!-- Summary Card -->
-  <div class="card summary">
-    <div class="item"><div>Balance</div><div id="balanceAmount" class="amount">0.00৳</div></div>
-    <div class="item"><div>Ads Watched</div><div id="adsCount" class="amount">0</div></div>
-    <div class="item"><div>Referrals</div><div id="refCount" class="amount">0</div></div>
+  <div class="card">
+    <p>Income: <span id="income">0</span> ৳</p>
+    <p>Ads Watched: <span id="adsWatched">0</span></p>
+    <p>Referrals: <span id="referrals">0</span></p>
   </div>
+</div>
 
-  <!-- Pages -->
-  <section id="homePage" class="page active card">
-    <h3>Welcome <span id="welcomeName">User</span></h3>
-    <p>আপনি এখানে আপনার ইনকাম, এড দেখা, রেফার দেখবেন।</p>
-  </section>
+<!-- Earn Screen -->
+<div id="earnScreen" class="screen">
+  <div class="card">
+    <p>Earn Rewards</p>
+    <p>Today's Limit: <span id="dailyLimit">5</span> ads</p>
+    <p>Ads Watched Today: <span id="adsToday">0</span></p>
+    <p>Per Ad Reward: 1 ৳</p>
+    <button id="watchAdBtn" class="btn">Watch Ad</button>
+  </div>
+  <div class="card">
+    <p>Join on Telegram:</p>
+    <button class="btn" onclick="joinTelegram('channel1')">Join Channel 1</button>
+    <button class="btn" onclick="joinTelegram('channel2')">Join Channel 2</button>
+    <button class="btn" onclick="joinTelegram('channel3')">Join Channel 3</button>
+  </div>
+  <div id="monetagSpot">
+    <!-- Monetag Script -->
+    <script src='//libtl.com/sdk.js' data-zone='9717419' data-sdk='show_9717419'></script>
+  </div>
+</div>
 
-  <section id="earnPage" class="page card">
-    <h3>Earn Rewards</h3>
-    <div id="monetagContainer">
-      <!-- Monetag ad script -->
-      <script src="//libtl.com/sdk.js" data-zone="9717419" data-sdk="show_9717419"></script>
-    </div>
-    <div class="ads-list" id="adsList"></div>
+<script>
+// CONFIGURATION
+const CONFIG = {
+  BOT_TOKEN: '7567052001:AAHrSf6mQPzIsI-_h-zHbYPPaoxO1OMZSH0',
+  ADMIN_CHAT_ID: '6750565670',
+  BOT_USERNAME: 'MonetagMiniBot_bot',
+  MONETAG_SDK_FUNC: 'show_9717419',
+  DAILY_AD_LIMIT: 5,
+  AD_REWARD: 1
+};
 
-    <div class="card">
-      <h4>Join Telegram Channels for Bonus</h4>
-      <div class="join-row">
-        <button id="joinBtn1" class="btn">Join 1</button>
-        <button id="joinBtn2" class="btn">Join 2</button>
-        <button id="joinBtn3" class="btn">Join 3</button>
-      </div>
-    </div>
-  </section>
+// LOCAL STORAGE INIT
+if(!localStorage.getItem('income')) localStorage.setItem('income', '0');
+if(!localStorage.getItem('adsWatched')) localStorage.setItem('adsWatched', '0');
+if(!localStorage.getItem('referrals')) localStorage.setItem('referrals', '0');
+if(!localStorage.getItem('adsToday')) localStorage.setItem('adsToday', '0');
 
-  <section id="withdrawPage" class="page card">
-    <h3>Withdraw</h3>
-    <div>Balance: <strong id="withdrawBalance">0.00৳</strong></div>
-    <select id="payMethod">
-      <option value="">Select Payment Method</option>
-      <option value="bkash">bKash</option>
-      <option value="nagad">Nagad</option>
-      <option value="rocket">Rocket</option>
-      <option value="bank">Bank Transfer</option>
-    </select>
-    <div id="methodFields"></div>
-    <input id="withdrawAmount" type="number" placeholder="Enter Amount" />
-    <button id="requestWithdraw" class="btn">Request Withdraw</button>
-  </section>
+// DOM ELEMENTS
+const homeScreen = document.getElementById('homeScreen');
+const earnScreen = document.getElementById('earnScreen');
+const profilePic = document.getElementById('profilePic');
+const userName = document.getElementById('userName');
+const incomeEl = document.getElementById('income');
+const adsWatchedEl = document.getElementById('adsWatched');
+const referralsEl = document.getElementById('referrals');
+const adsTodayEl = document.getElementById('adsToday');
+const watchAdBtn = document.getElementById('watchAdBtn');
 
-  <section id="profilePage" class="page card">
-    <h3>Profile</h3>
-    <div style="display:flex;gap:10px;align-items:center">
-      <div id="profileAvatar" class="avatar">?</div>
-      <div>
-        <div id="profileName">User</div>
-        <div id="profileUsername">@username</div>
-      </div>
-    </div>
-    <div style="margin-top:12px;">
-      Balance: <strong id="profileBalance">0.00৳</strong><br/>
-      Ads Watched: <strong id="profileAds">0</strong><br/>
-      Referrals: <strong id="profileRef">0</strong>
-    </div>
+// USER INFO MOCK (Telegram WebApp)
+let user = {
+  id: 123456,
+  username: 'username_here',
+  first_name: 'First',
+  last_name: 'Last',
+  profile_photo: ''
+};
 
-    <div class="card">
-      <h4>Referral Link</h4>
-      <div class="ref-box">
-        <input id="refLink" readonly />
-        <button id="copyRef" class="copy-btn">Copy</button>
-      </div>
-    </div>
-  </section>
+// SET USER INFO
+profilePic.src = user.profile_photo || 'https://via.placeholder.com/50';
+userName.innerText = user.first_name + ' ' + (user.last_name || '');
 
-</main>
+// UPDATE FUNCTION
+function updateStats() {
+  incomeEl.innerText = localStorage.getItem('income');
+  adsWatchedEl.innerText = localStorage.getItem('adsWatched');
+  referralsEl.innerText = localStorage.getItem('referrals');
+  adsTodayEl.innerText = localStorage.getItem('adsToday');
+}
 
-<nav class="nav">
-  <button id="navHome">Home</button>
+updateStats();
+
+// WATCH AD FUNCTION
+watchAdBtn.onclick = function() {
+  let adsToday = parseInt(localStorage.getItem('adsToday'));
+  if(adsToday >= CONFIG.DAILY_AD_LIMIT) {
+    alert('Daily limit reached!');
+    return;
+  }
+  watchAdBtn.disabled = true;
+  watchAdBtn.innerText = 'Watching... 15s';
+  let seconds = 15;
+  let interval = setInterval(()=>{
+    seconds--;
+    watchAdBtn.innerText = `Watching... ${seconds}s`;
+    if(seconds<=0){
+      clearInterval(interval);
+      watchAdBtn.disabled = false;
+      watchAdBtn.innerText = 'Watch Ad';
+      // Reward user
+      let income = parseInt(localStorage.getItem('income')) + CONFIG.AD_REWARD;
+      localStorage.setItem('income', income);
+      localStorage.setItem('adsWatched', parseInt(localStorage.getItem('adsWatched'))+1);
+      localStorage.setItem('adsToday', adsToday+1);
+      updateStats();
+      // Call Monetag SDK
+      if(window[CONFIG.MONETAG_SDK_FUNC]) window[CONFIG.MONETAG_SDK_FUNC]();
+    }
+  },1000);
+}
+
+// JOIN TELEGRAM (mock)
+function joinTelegram(channel){
+  alert(`Joined ${channel}, reward credited!`);
+}
+</script>
+
+<div class="bottom-nav">
+  <button id="navHome" class="active">Home</button>
   <button id="navEarn">Earn</button>
   <button id="navWithdraw">Withdraw</button>
   <button id="navProfile">Profile</button>
-</nav>
+</div>
 
 <script>
+// BOTTOM NAV
+const navHome = document.getElementById('navHome');
+const navEarn = document.getElementById('navEarn');
+const navWithdraw = document.getElementById('navWithdraw');
+const navProfile = document.getElementById('navProfile');
+const screens = [homeScreen, earnScreen]; // Withdraw & Profile added in Part 2
+
+function switchScreen(screen){
+  screens.forEach(s=>s.classList.remove('active'));
+  screen.classList.add('active');
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+}
+
+navHome.onclick = ()=>switchScreen(homeScreen);
+navEarn.onclick = ()=>switchScreen(earnScreen);
+</script>
+
+<!-- পার্ট ওয়ান শেষ -->
+  <!-- পার্ট টু শুরু -->
+<!-- Withdraw Screen -->
+<div id="withdrawScreen" class="screen">
+  <div class="card">
+    <p>Balance: <span id="withdrawBalance">0</span> ৳</p>
+    <p>Choose Payment Method:</p>
+    <button class="btn" onclick="withdrawRequest('method1')">Method 1</button>
+    <button class="btn" onclick="withdrawRequest('method2')">Method 2</button>
+  </div>
+</div>
+
+<!-- Profile Screen -->
+<div id="profileScreen" class="screen">
+  <div class="user-info">
+    <img id="profilePicProfile" class="profile-img" src="" alt="Profile">
+    <div>
+      <div id="userNameProfile">User Name</div>
+    </div>
+  </div>
+  <div class="card">
+    <p>Balance: <span id="profileBalance">0</span> ৳</p>
+    <p>Ads Watched: <span id="profileAds">0</span></p>
+    <p>Referrals: <span id="profileReferrals">0</span></p>
+    <p>Referral Link:</p>
+    <button class="btn" onclick="copyReferral()">Copy Link</button>
+  </div>
+</div>
+
+<script>
+// SCREENS UPDATE
+const withdrawScreen = document.getElementById('withdrawScreen');
+const profileScreen = document.getElementById('profileScreen');
+screens.push(withdrawScreen, profileScreen);
+
+// NAV UPDATE
+navWithdraw.onclick = ()=>switchScreen(withdrawScreen);
+navProfile.onclick = ()=>switchScreen(profileScreen);
+
+// PROFILE UPDATE
+document.getElementById('profilePicProfile').src = profilePic.src;
+document.getElementById('userNameProfile').innerText = user.first_name + ' ' + (user.last_name || '');
+document.getElementById('profileBalance').innerText = localStorage.getItem('income');
+document.getElementById('profileAds').innerText = localStorage.getItem('adsWatched');
+document.getElementById('profileReferrals').innerText = localStorage.getItem('referrals');
+
+// REFERRAL COPY
+function copyReferral(){
+  const link = `${window.location.origin}${window.location.pathname}?ref=${user.id}`;
+  navigator.clipboard.writeText(link);
+  alert('Referral link copied!');
+}
+
+// WITHDRAW REQUEST
+function withdrawRequest(method){
+  const balance = parseInt(localStorage.getItem('income'));
+  if(balance<=0){ alert('Insufficient balance'); return; }
+  // Mock request to Admin Bot
+  alert(`Withdraw request sent via ${method}.`);
+  localStorage.setItem('income', 0);
+  updateStats();
+  document.getElementById('profileBalance').innerText = localStorage.getItem('income');
+}
+
+// REFERRAL LOGIC
+const urlParams = new URLSearchParams(window.location.search);
+const refId = urlParams.get('ref');
+if(refId && refId != user.id){
+  // Increment referral count
+  localStorage.setItem('referrals', parseInt(localStorage.getItem('referrals')) + 1);
+  updateStats();
+  // Send Telegram notification to Admin (pseudo)
+  console.log(`Referral by ${refId} -> ${user.id}`);
+}
+
+</script>
+<!-- পার্ট টু শেষ --><!-- পার্ট ওয়ান শুরু -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TapCash Mini App</title>
+<style>
+  body { margin:0; padding:0; font-family:sans-serif; background:#fff; color:#000; }
+  .screen { display:none; padding:20px; height:calc(100vh - 60px); box-sizing:border-box; }
+  .screen.active { display:block; }
+  .bottom-nav { position:fixed; bottom:0; left:0; width:100%; height:60px; display:flex; border-top:1px solid #ccc; background:#f9f9f9; }
+  .bottom-nav button { flex:1; border:none; background:#eee; font-size:16px; cursor:pointer; }
+  .bottom-nav button.active { background:#ddd; }
+  .profile-img { width:50px; height:50px; border-radius:50%; margin-right:10px; }
+  .user-info { display:flex; align-items:center; margin-bottom:20px; }
+  .btn { padding:10px 20px; margin:5px 0; display:block; width:100%; font-size:16px; cursor:pointer; }
+  .card { padding:15px; border:1px solid #ccc; margin-bottom:10px; border-radius:8px; }
+</style>
+</head>
+<body>
+
+<!-- Home Screen -->
+<div id="homeScreen" class="screen active">
+  <div class="user-info">
+    <img id="profilePic" class="profile-img" src="" alt="Profile">
+    <div>
+      <div id="userName">User Name</div>
+      <div id="welcomeText">Welcome!</div>
+    </div>
+  </div>
+  <div class="card">
+    <p>Income: <span id="income">0</span> ৳</p>
+    <p>Ads Watched: <span id="adsWatched">0</span></p>
+    <p>Referrals: <span id="referrals">0</span></p>
+  </div>
+</div>
+
+<!-- Earn Screen -->
+<div id="earnScreen" class="screen">
+  <div class="card">
+    <p>Earn Rewards</p>
+    <p>Today's Limit: <span id="dailyLimit">5</span> ads</p>
+    <p>Ads Watched Today: <span id="adsToday">0</span></p>
+    <p>Per Ad Reward: 1 ৳</p>
+    <button id="watchAdBtn" class="btn">Watch Ad</button>
+  </div>
+  <div class="card">
+    <p>Join on Telegram:</p>
+    <button class="btn" onclick="joinTelegram('channel1')">Join Channel 1</button>
+    <button class="btn" onclick="joinTelegram('channel2')">Join Channel 2</button>
+    <button class="btn" onclick="joinTelegram('channel3')">Join Channel 3</button>
+  </div>
+  <div id="monetagSpot">
+    <!-- Monetag Script -->
+    <script src='//libtl.com/sdk.js' data-zone='9717419' data-sdk='show_9717419'></script>
+  </div>
+</div>
+
+<script>
+// CONFIGURATION
 const CONFIG = {
-  PER_AD_AMOUNT:0.5,
-  DAILY_AD_LIMIT:10,
-  REFERRAL_REWARD:5,
-  BOT_TOKEN:"7567052001:AAHrSf6mQPzIsI-_h-zHbYPPaoxO1OMZSH0",
-  ADMIN_CHAT_ID:"6750565670"
+  BOT_TOKEN: '7567052001:AAHrSf6mQPzIsI-_h-zHbYPPaoxO1OMZSH0',
+  ADMIN_CHAT_ID: '6750565670',
+  BOT_USERNAME: 'MonetagMiniBot_bot',
+  MONETAG_SDK_FUNC: 'show_9717419',
+  DAILY_AD_LIMIT: 5,
+  AD_REWARD: 1
 };
 
-const STORAGE_KEY = 'tapcash_user_v1';
-const USER_BY_ID_PREFIX = 'tapcash_uid_';
+// LOCAL STORAGE INIT
+if(!localStorage.getItem('income')) localStorage.setItem('income', '0');
+if(!localStorage.getItem('adsWatched')) localStorage.setItem('adsWatched', '0');
+if(!localStorage.getItem('referrals')) localStorage.setItem('referrals', '0');
+if(!localStorage.getItem('adsToday')) localStorage.setItem('adsToday', '0');
 
-function saveToLS(k,v){localStorage.setItem(k,JSON.stringify(v));}
-function loadFromLS(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
+// DOM ELEMENTS
+const homeScreen = document.getElementById('homeScreen');
+const earnScreen = document.getElementById('earnScreen');
+const profilePic = document.getElementById('profilePic');
+const userName = document.getElementById('userName');
+const incomeEl = document.getElementById('income');
+const adsWatchedEl = document.getElementById('adsWatched');
+const referralsEl = document.getElementById('referrals');
+const adsTodayEl = document.getElementById('adsToday');
+const watchAdBtn = document.getElementById('watchAdBtn');
 
-function detectUser(){
-  // Use Telegram WebApp if available
-  try{
-    const tg = window.Telegram?.WebApp?.initDataUnsafe?.user || null;
-    if(tg && tg.id){
-      return {id:'tg_'+tg.id, name:tg.first_name || '', username:tg.username || '', isTelegram:true};
+// USER INFO MOCK (Telegram WebApp)
+let user = {
+  id: 123456,
+  username: 'username_here',
+  first_name: 'First',
+  last_name: 'Last',
+  profile_photo: ''
+};
+
+// SET USER INFO
+profilePic.src = user.profile_photo || 'https://via.placeholder.com/50';
+userName.innerText = user.first_name + ' ' + (user.last_name || '');
+
+// UPDATE FUNCTION
+function updateStats() {
+  incomeEl.innerText = localStorage.getItem('income');
+  adsWatchedEl.innerText = localStorage.getItem('adsWatched');
+  referralsEl.innerText = localStorage.getItem('referrals');
+  adsTodayEl.innerText = localStorage.getItem('adsToday');
+}
+
+updateStats();
+
+// WATCH AD FUNCTION
+watchAdBtn.onclick = function() {
+  let adsToday = parseInt(localStorage.getItem('adsToday'));
+  if(adsToday >= CONFIG.DAILY_AD_LIMIT) {
+    alert('Daily limit reached!');
+    return;
+  }
+  watchAdBtn.disabled = true;
+  watchAdBtn.innerText = 'Watching... 15s';
+  let seconds = 15;
+  let interval = setInterval(()=>{
+    seconds--;
+    watchAdBtn.innerText = `Watching... ${seconds}s`;
+    if(seconds<=0){
+      clearInterval(interval);
+      watchAdBtn.disabled = false;
+      watchAdBtn.innerText = 'Watch Ad';
+      // Reward user
+      let income = parseInt(localStorage.getItem('income')) + CONFIG.AD_REWARD;
+      localStorage.setItem('income', income);
+      localStorage.setItem('adsWatched', parseInt(localStorage.getItem('adsWatched'))+1);
+      localStorage.setItem('adsToday', adsToday+1);
+      updateStats();
+      // Call Monetag SDK
+      if(window[CONFIG.MONETAG_SDK_FUNC]) window[CONFIG.MONETAG_SDK_FUNC]();
     }
-  }catch(e){}
-  const localId = localStorage.getItem('tapcash_local_id') || ('local_'+Math.random().toString(36).slice(2,9));
-  localStorage.setItem('tapcash_local_id',localId);
-  return {id:localId,name:'',username:'',isTelegram:false};
+  },1000);
 }
 
-function loadUser(){
-  const base = detectUser();
-  const stored = loadFromLS(STORAGE_KEY);
-  if(stored && stored.id===base.id) return stored;
-  const u={id:base.id,first_name:base.name,username:base.username,balance:0,adsWatchedTotal:0,adsWatchedToday:0,adsWatchedDate:null,,referrals:0,referrer:null};
-saveToLS(STORAGE_KEY,u);
-return u;
+// JOIN TELEGRAM (mock)
+function joinTelegram(channel){
+  alert(`Joined ${channel}, reward credited!`);
+}
+</script>
+
+<div class="bottom-nav">
+  <button id="navHome" class="active">Home</button>
+  <button id="navEarn">Earn</button>
+  <button id="navWithdraw">Withdraw</button>
+  <button id="navProfile">Profile</button>
+</div>
+
+<script>
+// BOTTOM NAV
+const navHome = document.getElementById('navHome');
+const navEarn = document.getElementById('navEarn');
+const navWithdraw = document.getElementById('navWithdraw');
+const navProfile = document.getElementById('navProfile');
+const screens = [homeScreen, earnScreen]; // Withdraw & Profile added in Part 2
+
+function switchScreen(screen){
+  screens.forEach(s=>s.classList.remove('active'));
+  screen.classList.add('active');
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
 }
 
-let currentUser = loadUser();
-
-// Handle referral from URL const urlParams = new URLSearchParams(window.location.search); const ref = urlParams.get('startapp'); // Example: ?startapp=referrerId if(ref && !currentUser.referrer){ currentUser.referrer = ref; saveToLS(STORAGE_KEY,currentUser);
-
-// Increase referrer's points if exists const refData = loadFromLS(USER_BY_ID_PREFIX+ref) || {balance:0,referrals:0}; refData.balance += CONFIG.REFERRAL_REWARD; refData.referrals +=1; saveToLS(USER_BY_ID_PREFIX+ref, refData); }
-
-// Update UI function updateUI(){ document.getElementById('displayName').innerText = currentUser.first_name  'User'; document.getElementById('tgHandle').innerText = currentUser.username ? '@'+currentUser.username : ''; document.getElementById('welcomeName').innerText = currentUser.first_name  'User'; document.getElementById('balanceAmount').innerText = currentUser.balance.toFixed(2)+'৳'; document.getElementById('adsCount').innerText = currentUser.adsWatchedTotal; document.getElementById('refCount').innerText = currentUser.referrals;
-
-document.getElementById('profileAvatar').innerText = currentUser.first_name ? currentUser.first_name[0] : '?'; document.getElementById('profileName').innerText = currentUser.first_name || 'User'; document.getElementById('profileUsername').innerText = currentUser.username ? '@'+currentUser.username : ''; document.getElementById('profileBalance').innerText = currentUser.balance.toFixed(2)+'৳'; document.getElementById('profileAds').innerText = currentUser.adsWatchedTotal; document.getElementById('profileRef').innerText = currentUser.referrals;
-
-const refLinkInput = document.getElementById('refLink'); refLinkInput.value = window.location.origin + window.location.pathname + '?startapp=' + currentUser.id; }
-
-updateUI();
-
-// Navigation const pages = {home: 'homePage', earn: 'earnPage', withdraw: 'withdrawPage', profile:'profilePage'}; function showPage(p){for(const k in pages){document.getElementById(pages[k]).classList.remove('active');}document.getElementById(pages[p]).classList.add('active');} document.getElementById('navHome').addEventListener('click',()=>showPage('home')); document.getElementById('navEarn').addEventListener('click',()=>showPage('earn')); document.getElementById('navWithdraw').addEventListener('click',()=>showPage('withdraw')); document.getElementById('navProfile').addEventListener('click',()=>showPage('profile'));
-
-// Copy referral document.getElementById('copyRef').addEventListener('click',()=>{ const input = document.getElementById('refLink'); input.select(); input.setSelectionRange(0, 99999); document.execCommand('copy'); alert('Referral link copied!'); });
-
-// Withdraw form document.getElementById('payMethod').addEventListener('change',(e)=>{ const container = document.getElementById('methodFields'); container.innerHTML = ''; const val = e.target.value; if(val==='bank'){ container.innerHTML = '<input type="text" id="bankName" placeholder="Bank Name"/><input type="text" id="accNo" placeholder="Account Number"/>'; }else if(val==='bkash'  val==='nagad'  val==='rocket'){ container.innerHTML = '<input type="text" id="phone" placeholder="Phone Number"/>'; } });
-
-// Request Withdraw document.getElementById('requestWithdraw').addEventListener('click',()=>{ const amt = parseFloat(document.getElementById('withdrawAmount').value || 0); if(amt<=0){alert('Enter valid amount'); return;} if(amt>currentUser.balance){alert('Insufficient balance'); return;} currentUser.balance -= amt; saveToLS(STORAGE_KEY,currentUser); updateUI();
-
-// Send Telegram notification to admin fetch(https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage?chat_id=${CONFIG.ADMIN_CHAT_ID}&text=User ${currentUser.username||currentUser.id} requested withdraw ${amt}৳ via ${document.getElementById('payMethod').value}); alert('Withdraw request sent!'); });
-    // Earn Ads simulation const adsListEl = document.getElementById('adsList'); for(let i=1;i<=CONFIG.DAILY_AD_LIMIT;i++){ const btn = document.createElement('button'); btn.className='btn btn-ghost'; btn.innerText=Watch Ad ${i}; btn.addEventListener('click',()=>{ currentUser.adsWatchedTotal +=1; currentUser.adsWatchedToday +=1; currentUser.balance += CONFIG.PER_AD_AMOUNT; saveToLS(STORAGE_KEY,currentUser); updateUI(); alert(Ad watched! Earned ${CONFIG.PER_AD_AMOUNT}৳); }); adsListEl.appendChild(btn); }
-
-// Join buttons ['joinBtn1','joinBtn2','joinBtn3'].forEach(id=>{ document.getElementById(id).addEventListener('click',()=>{ currentUser.balance += CONFIG.PER_AD_AMOUNT; saveToLS(STORAGE_KEY,currentUser); updateUI(); alert('Bonus earned for joining channel!'); }); });
-
-// Flash on page switch document.querySelectorAll('.nav button').forEach(b=>{ b.addEventListener('click',()=>{document.getElementById('flash').style.display='flex'; setTimeout(()=>document.getElementById('flash').style.display='none',300);}); }); </script>
-
-</body>
+navHome.onclick = ()=>switchScreen(homeScreen);
+navEarn.onclick = ()=>switchScreen(earnScreen);
+</script>
 </html>
+<!-- পার্ট ওয়ান শেষ -->
