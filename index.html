@@ -1,198 +1,186 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>TapCash Mini App Clone</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TapCash Mini App</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-  body{background:#fff;color:#000;display:flex;flex-direction:column;min-height:100vh}
-  .flash{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;display:none;align-items:center;justify-content:center;z-index:999;font-weight:700;font-size:22px;color:#000}
-  header{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #eee}
-  .avatar{width:56px;height:56px;border-radius:50%;background:#0b74ff;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;margin-right:12px}
-  .userinfo small{color:#555;display:block}
-  main{padding:12px;flex:1;overflow:auto}
-  .card{background:#f9f9f9;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
-  .summary{display:flex;gap:10px;margin-top:8px}
-  .summary .item{flex:1;background:#eef3ff;text-align:center;padding:12px;border-radius:10px}
-  .amount{font-weight:800;font-size:18px}
-  .page{display:none}
-  .page.active{display:block}
-  .ads-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-  .ad-card{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;border:1px solid #ddd;background:#fff}
-  .btn{padding:8px 12px;border-radius:8px;border:0;background:#0b74ff;color:#fff;font-weight:700;cursor:pointer}
-  .join-row{display:flex;gap:8px;margin-top:8px}
-  .join-row .btn{flex:1}
-  input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:10px}
-  .ref-box{display:flex;gap:8px;align-items:center}
-  .copy-btn{padding:8px;border-radius:8px;border:0;background:#111827;color:#fff;cursor:pointer}
-  .nav{position:fixed;left:12px;right:12px;bottom:12px;height:60px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:space-around;box-shadow:0 8px 30px rgba(0,0,0,0.1)}
-  .nav button{flex:1;margin:0 8px;padding:10px;border-radius:10px;border:0;color:#fff;background:#0b74ff;font-weight:700;cursor:pointer}
+body {
+    margin: 0; font-family: Arial, sans-serif; background: #fff; color: #000; min-height: 100vh; display: flex; flex-direction: column;
+}
+.header {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #eee; border-bottom: 1px solid #ccc;
+}
+.avatar { width: 56px; height: 56px; border-radius: 50%; background: #0b74ff; color: #fff; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 24px; }
+.userinfo small { color: #555; display: block; }
+.main { flex:1; overflow:auto; padding:12px; }
+.card { background:#f8f8f8; border-radius:12px; padding:12px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+.summary { display:flex; gap:10px; }
+.summary .item { flex:1; padding:12px; border-radius:10px; background:#fff; text-align:center; }
+.amount { font-weight:800; font-size:18px; }
+.page{display:none;}
+.page.active{display:block;}
+.ads-list{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+.ad-card{display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:10px; border:1px solid #ddd; background:#fff;}
+.btn{padding:8px 12px; border-radius:8px; border:0; background:#0b74ff; color:#fff; font-weight:700; cursor:pointer;}
+.btn-ghost{background:transparent;border:1px solid #ddd;color:#000;}
+.join-row{display:flex; gap:8px; margin-top:8px;}
+.join-row .btn{flex:1;}
+input, select, textarea{width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; margin-top:10px;}
+.ref-box{display:flex; gap:8px; align-items:center;}
+.copy-btn{padding:8px; border-radius:8px; border:0; background:#111827; color:#fff; cursor:pointer;}
+.nav{position:fixed; left:0; right:0; bottom:0; height:60px; background:#fff; display:flex; justify-content:space-around; align-items:center; box-shadow:0 -2px 8px rgba(0,0,0,0.1);}
+.nav button{flex:1; margin:0 6px; padding:10px; border-radius:10px; border:0; font-weight:700; cursor:pointer; color:#fff;}
+.nav button.home{background:#16a34a;}
+.nav button.earn{background:#0b74ff;}
+.nav button.withdraw{background:#f97316;}
+.nav button.profile{background:#7c3aed;}
+.flash{position:fixed; inset:0; background:#fff; display:none; align-items:center; justify-content:center; color:#000; font-weight:700; z-index:9999; font-size:20px;}
+.small{font-size:13px;color:#555;}
 </style>
 </head>
 <body>
 
 <div id="flash" class="flash">Loading...</div>
 
-<header>
-  <div id="avatarEl" class="avatar">?</div>
-  <div class="userinfo">
-    <small id="tgHandle">@josimm123</small>
-    <div id="displayName">জসিম</div>
-  </div>
+<header class="header">
+    <div id="avatarEl" class="avatar">?</div>
+    <div class="userinfo">
+        <small id="tgHandle">@username</small>
+        <div id="displayName">User Name</div>
+    </div>
 </header>
 
-<main>
-  <!-- Home -->
-  <section id="homePage" class="page active card">
-    <h2>Welcome <span id="welcomeName">জসিম</span></h2>
-    <div class="summary">
-      <div class="item"><div>টাকা</div><div id="balanceAmount" class="amount">0৳</div></div>
-      <div class="item"><div>দেখা এড</div><div id="adsCount" class="amount">0</div></div>
-      <div class="item"><div>রেফার</div><div id="refCount" class="amount">0</div></div>
-    </div>
-  </section>
+<main class="main">
 
-  <!-- Earn -->
-  <section id="earnPage" class="page card">
-    <h2>Earn Rewards</h2>
-    <div id="monetagContainer">
-      <script src='//libtl.com/sdk.js' data-zone='9717419' data-sdk='show_9717419'></script>
-    </div>
-    <div class="ads-list" id="adsList"></div>
-    <div class="card">
-      <h4>Join Telegram</h4>
-      <div class="join-row">
-        <button id="joinBtn1" class="btn">Join 1</button>
-        <button id="joinBtn2" class="btn">Join 2</button>
-        <button id="joinBtn3" class="btn">Join 3</button>
-      </div>
-    </div>
-  </section>
+<div class="card">
+    <div><strong id="welcomeText">Welcome</strong></div>
+    <div class="small">আপনার ইনকাম, এড এবং রেফারাল নিচে দেখানো হবে।</div>
+</div>
 
-  <!-- Withdraw -->
-  <section id="withdrawPage" class="page card">
-    <h2>Withdraw</h2>
-    <div>Balance: <span id="withdrawBalance">0৳</span></div>
+<div class="card summary">
+    <div class="item"><div class="small">টাকা</div><div id="balanceAmount" class="amount">0.00৳</div></div>
+    <div class="item"><div class="small">দেখা এড</div><div id="adsCount" class="amount">0</div></div>
+    <div class="item"><div class="small">রেফার</div><div id="refCount" class="amount">0</div></div>
+</div>
+
+<section id="homePage" class="page active card">
+    <h3>Home</h3>
+    <div style="margin-top:8px" class="small">Welcome, <strong id="welcomeName">User Name</strong></div>
+</section>
+
+<section id="earnPage" class="page card">
+    <h3>Earn Rewards</h3>
+    <div id="monetagContainer" style="margin-top:8px"></div>
+    <div id="adsList" class="ads-list"></div>
+    <div class="card" style="margin-top:12px">
+        <h4>টেলিগ্রামে জয়েন করে বোনাস</h4>
+        <div class="join-row">
+            <button id="joinBtn1" class="btn">Join 1</button>
+            <button id="joinBtn2" class="btn">Join 2</button>
+            <button id="joinBtn3" class="btn">Join 3</button>
+        </div>
+        <div class="small" style="margin-top:8px">Join করে পয়েন্ট/টাকা পাবেন।</div>
+    </div>
+</section>
+
+<section id="withdrawPage" class="page card">
+    <h3>Withdraw</h3>
+    <div class="small">ব্যালান্স: <strong id="withdrawBalance">0.00৳</strong></div>
+    <label class="small" style="margin-top:10px;display:block">পেমেন্ট মেথড</label>
     <select id="payMethod">
-      <option value="">Select Method</option>
-      <option value="bkash">bKash</option>
-      <option value="nagad">Nagad</option>
-      <option value="rocket">Rocket</option>
-      <option value="bank">Bank Transfer</option>
+        <option value="">Select</option>
+        <option value="bkash">bKash</option>
+        <option value="nagad">Nagad</option>
+        <option value="rocket">Rocket</option>
+        <option value="bank">Bank transfer</option>
     </select>
     <div id="methodFields"></div>
-    <input id="withdrawAmount" type="number" placeholder="Amount ৳">
-    <button id="requestWithdraw" class="btn">Request Withdraw</button>
-  </section>
+    <label class="small" style="display:block;margin-top:8px">পরিমাণ (৳)</label>
+    <input id="withdrawAmount" type="number" placeholder="উদাহরণ: 100">
+    <button id="requestWithdraw" class="btn">উইথড্র রিকুয়েস্ট পাঠান</button>
+</section>
 
-  <!-- Profile -->
-  <section id="profilePage" class="page card">
-    <h2>Profile</h2>
+<section id="profilePage" class="page card">
+    <h3>Profile</h3>
     <div style="display:flex;gap:12px;align-items:center">
-      <div id="profileAvatar" class="avatar">J</div>
-      <div>
-        <div id="profileName">জসিম</div>
-        <div id="profileUsername">@josimm123</div>
-      </div>
+        <div id="profileAvatar" class="avatar">?</div>
+        <div>
+            <div id="profileName">User Name</div>
+            <div id="profileUsername" class="small">@username</div>
+        </div>
     </div>
-    <div class="summary" style="margin-top:12px">
-      <div class="item">Balance: <span id="profileBalance">0৳</span></div>
-      <div class="item">Ads: <span id="profileAds">0</span></div>
-      <div class="item">Referrals: <span id="profileRef">0</span></div>
+    <div style="margin-top:12px" class="small">
+        ব্যালান্স: <strong id="profileBalance">0.00৳</strong><br>
+        এড দেখা: <strong id="profileAds">0</strong><br>
+        রেফার: <strong id="profileRef">0</strong>
     </div>
     <div class="card" style="margin-top:12px">
-      <h4>Referral Link</h4>
-      <div class="ref-box">
-        <input id="refLink" readonly value="https://yourapp.com?ref=123" />
-        <button id="copyRef" class="copy-btn">Copy</button>
-      </div>
+        <h4>রেফার লিঙ্ক</h4>
+        <div class="ref-box">
+            <input id="refLink" readonly style="padding:8px;border-radius:8px;border:1px solid #ccc;flex:1">
+            <button id="copyRef" class="copy-btn">কপি</button>
+        </div>
+        <div class="small" style="margin-top:8px">শেয়ার করলে নতুন ইউজার বোনাস পাবে।</div>
     </div>
-  </section>
+</section>
+
 </main>
 
 <nav class="nav">
-  <button id="navHome">Home</button>
-  <button id="navEarn">Earn</button>
-  <button id="navWithdraw">Withdraw</button>
-  <button id="navProfile">Profile</button>
+    <button id="navHome" class="home">Home</button>
+    <button id="navEarn" class="earn">Earn</button>
+    <button id="navWithdraw" class="withdraw">Withdraw</button>
+    <button id="navProfile" class="profile">Profile</button>
 </nav>
 
 <script>
-let user = {
-  balance:0,
-  adsWatched:0,
-  referrals:0
+/* CONFIG */
+const CONFIG = {
+    PER_AD_AMOUNT: 0.5,
+    DAILY_AD_LIMIT: 10,
+    REFERRAL_REWARD: 5,
+    MONETAG_ZONE_ID:'9717419',
+    BOT_TOKEN:'7567052001:AAHrSf6mQPzIsI-_h-zHbYPPaoxO1OMZSH0',
+    ADMIN_CHAT_ID:'6750565670',
+    BOT_USERNAME:'MonetagMiniBot_bot'
 };
-function showFlash(msg='Loading...'){ const f=document.getElementById('flash'); f.innerText=msg; f.style.display='flex'; }
-function hideFlash(){ document.getElementById('flash').style.display='none'; }
-function goto(id){ showFlash(); setTimeout(()=>{ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); hideFlash(); },200); }
 
-document.getElementById('navHome').addEventListener('click',()=>goto('homePage'));
-document.getElementById('navEarn').addEventListener('click',()=>goto('earnPage'));
-document.getElementById('navWithdraw').addEventListener('click',()=>goto('withdrawPage'));
-document.getElementById('navProfile').addEventListener('click',()=>goto('profilePage'));
+/* USER STORAGE */
+const STORAGE_KEY='tapcash_user_v2';
+function saveUser(u){ localStorage.setItem(STORAGE_KEY,JSON.stringify(u)); }
+function loadUser(){ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); }
 
-// Ads simulation
-const adsList = document.getElementById('adsList');
-for(let i=1;i<=3;i++){
-  const d = document.createElement('div');
-  d.className='ad-card';
-  d.innerHTML=`<div>Ad #${i} - Earn 1৳</div><button class="btn">Watch</button>`;
-  adsList.appendChild(d);
-  d.querySelector('button').addEventListener('click',()=>{
-    user.balance += 1; user.adsWatched +=1; updateSummary(); alert('Ad watched +1৳ earned');
-  });
+function createUser(){
+    const u={id:'tg_'+Math.random().toString(36).slice(2,9),first_name:'User',username:'@josimm123',balance:0,adsWatchedTotal:0,adsWatchedToday:0,adsWatchedDate:null,referrals:0,referrer:null,creditedRef:false};
+    saveUser(u); return u;
 }
+let user = loadUser() || createUser();
 
-// Join buttons
-document.getElementById('joinBtn1').addEventListener('click',()=>{ user.balance+=1; updateSummary(); window.open('https://t.me/MonetagMiniBot_bot','_blank'); });
-document.getElementById('joinBtn2').addEventListener('click',()=>{ user.balance+=1; updateSummary(); window.open('https://t.me/MonetagMiniBot_bot','_blank'); });
-document.getElementById('joinBtn3').addEventListener('click',()=>{ user.balance+=1; updateSummary(); window.open('https://t.me/MonetagMiniBot_bot','_blank'); });
+/* HEADER */
+function renderHeader(){
+    document.getElementById('displayName').innerText=user.first_name;
+    document.getElementById('tgHandle').innerText=user.username;
+    document.getElementById('avatarEl').innerText=user.first_name[0];
+    .getElementById('avatarEl').innerText=user.first_name[0];
 
-// Withdraw logic
-document.getElementById('payMethod').addEventListener('change',function(){
-  const val=this.value;
-  const container=document.getElementById('methodFields');
-  container.innerHTML='';
-  if(val==='bkash' || val==='nagad' || val==='rocket'){
-    container.innerHTML=`<input id="payNumber" placeholder="Number">`;
-  } else if(val==='bank'){
-    container.innerHTML=`<input id="bankName" placeholder="Bank Name"><input id="bankAcc" placeholder="Account Number">`;
-  }
-});
-document.getElementById('requestWithdraw').addEventListener('click',()=>{
-  const amt=parseFloat(document.getElementById('withdrawAmount').value);
-  if(isNaN(amt)||amt<=0){alert('Enter valid amount');return;}
-  if(amt>user.balance){alert('Not enough balance');return;}
-  user.balance-=amt; updateSummary(); alert('Withdraw request sent to admin');
-});
+/* NAVIGATION */ const pages = {home: 'homePage', earn: 'earnPage', withdraw: 'withdrawPage', profile: 'profilePage'}; function showPage(page){ Object.values(pages).forEach(id => document.getElementById(id).classList.remove('active')); document.getElementById(pages[page]).classList.add('active'); flashScreen(); } document.getElementById('navHome').addEventListener('click',()=>showPage('home')); document.getElementById('navEarn').addEventListener('click',()=>showPage('earn')); document.getElementById('navWithdraw').addEventListener('click',()=>showPage('withdraw')); document.getElementById('navProfile').addEventListener('click',()=>showPage('profile'));
 
-// Referral copy
-document.getElementById('copyRef').addEventListener('click',()=>{
-  const refInput=document.getElementById('refLink');
-  refInput.select(); refInput.setSelectionRange(0,99999); navigator.clipboard.writeText(refInput.value);
-  alert('Referral link copied');
-});
+/* FLASH SCREEN ON NAV CLICK */ function flashScreen(){ const flash = document.getElementById('flash'); flash.style.display='flex'; setTimeout(()=>flash.style.display='none',300); }
 
-// Update summary
-function updateSummary(){
-  document.getElementById('balanceAmount').innerText=user.balance+'৳';
-  document.getElementById('adsCount').innerText=user.adsWatched;
-  document.getElementById('refCount').innerText=user.referrals;
-  document.getElementById('profileBalance').innerText=user.balance+'৳';
-  document.getElementById('profileAds').innerText=user.adsWatched;
-  document.getElementById('profileRef').innerText=user.referrals;
-}
+/* REF LINK */ const refInput = document.getElementById('refLink'); refInput.value=https://t.me/${CONFIG.BOT_USERNAME}?start=${user.id}; document.getElementById('copyRef').addEventListener('click',()=>{ refInput.select(); document.execCommand('copy'); alert('Referral link copied!'); });
 
-// Referral simulation
-function checkReferral(startParam){
-  if(startParam){ user.referrals+=1; updateSummary(); }
-}
-// Example: on app load parse ?ref=123 from URL
-const urlParams = new URLSearchParams(window.location.search);
-checkReferral(urlParams.get('ref'));
-</script>
+/* MONETAG AD */ const monetagContainer = document.getElementById('monetagContainer'); monetagContainer.innerHTML=<script src='//libtl.com/sdk.js' data-zone='${CONFIG.MONETAG_ZONE_ID}' data-sdk='show_${CONFIG.MONETAG_ZONE_ID}'></script>;
+
+/* EARN ADS LIST */ const adsListEl = document.getElementById('adsList'); function renderAds(){ adsListEl.innerHTML=''; for(let i=1;i<=CONFIG.DAILY_AD_LIMIT;i++){ const adBtn = document.createElement('button'); adBtn.className='btn btn-ghost'; adBtn.innerText=Watch Ad ${i} - Earn ${CONFIG.PER_AD_AMOUNT}৳; adBtn.addEventListener('click',()=>{ if(user.adsWatchedToday>=CONFIG.DAILY_AD_LIMIT){ alert('আজকের এড সীমা শেষ হয়েছে!'); return; } user.adsWatchedToday++; user.adsWatchedTotal++; user.balance+=CONFIG.PER_AD_AMOUNT; saveUser(user); updateSummary(); renderAds(); alert(এড দেখলেন! ${CONFIG.PER_AD_AMOUNT}৳ যোগ হয়েছে।); }); adsListEl.appendChild(adBtn); } } renderAds();
+
+/* UPDATE SUMMARY */ function updateSummary(){ document.getElementById('balanceAmount').innerText=${user.balance.toFixed(2)}৳; document.getElementById('adsCount').innerText=user.adsWatchedTotal; document.getElementById('refCount').innerText=user.referrals; document.getElementById('profileBalance').innerText=${user.balance.toFixed(2)}৳; document.getElementById('profileAds').innerText=user.adsWatchedTotal; document.getElementById('profileRef').innerText=user.referrals; document.getElementById('welcomeName').innerText=user.first_name; } updateSummary();
+
+/* JOIN BUTTONS */ ['joinBtn1','joinBtn2','joinBtn3'].forEach(id=>{ document.getElementById(id).addEventListener('click',()=>{ alert('Join Success! You earned points.'); user.balance+=CONFIG.REFERRAL_REWARD; saveUser(user); updateSummary(); }); });
+
+/* WITHDRAW */ const payMethodEl = document.getElementById('payMethod'); const methodFieldsEl = document.getElementById('methodFields'); payMethodEl.addEventListener('change',()=>{ const val = payMethodEl.value; let html=''; if(val==='bkash'||val==='nagad'||val==='rocket'){ html=<input id="methodNumber" placeholder="Number or Account" type="text">; } else if(val==='bank'){ html=<input id="methodBank" placeholder="Bank Account / IBAN" type="text">; } methodFieldsEl.innerHTML=html; }); document.getElementById('requestWithdraw').addEventListener('click',()=>{ const amt = parseFloat(document.getElementById('withdrawAmount').value||0); if(!amt || amt>user.balance){ alert('Invalid amount'); return; } user.balance-=amt; saveUser(user); updateSummary(); alert(Withdrawal request sent: ${amt}৳); });
+
+/* REFERRAL FROM URL PARAM */ function handleReferral(){ const params = new URLSearchParams(window.location.search); const ref = params.get('start'); if(ref && ref!==user.id && !user.creditedRef){ user.creditedRef=true; user.referrer=ref; saveUser(user); alert('Referral credited!'); // Here you can send Telegram message to admin if needed via fetch } } handleReferral(); </script>
 
 </body>
 </html>
